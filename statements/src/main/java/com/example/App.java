@@ -66,10 +66,22 @@ public class App {
                     Statement selectStmt = conn.createStatement();
                     rs = selectStmt.executeQuery(selectSql);
                 }
-            } else if (true) {
-                String sql = "update ics2609.example" +
-                    "SET name = \"Juliana Giva\"" +
+            } else if (false) {
+                String sql = "update ics2609.example " +
+                    "SET name = \"Juliana Giva\" " +
                     "WHERE _id = 1";
+                
+                Statement stmt = conn.createStatement();
+                int resultCount = stmt.executeUpdate(sql);
+
+                if (resultCount > 0) {
+                    String selectSql = String.format("select * from ics2609.example");
+                    Statement selectStmt = conn.createStatement();
+                    rs = selectStmt.executeQuery(selectSql);
+                }
+            } else if (true) {
+                String sql = "delete from ics2609.example " +
+                    "where _id = 0";
                 
                 Statement stmt = conn.createStatement();
                 int resultCount = stmt.executeUpdate(sql);
