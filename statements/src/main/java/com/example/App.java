@@ -1,4 +1,4 @@
-package com.example;
+package com.example; //comment out if default package
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,6 +32,7 @@ public class App {
 
         try {
             conn.close();
+            conn = null;
             System.out.println("Connection closed.");
             return true;
         } catch (SQLException sqlException) {
@@ -42,26 +43,40 @@ public class App {
         return false;
     }
 
+    // public static ResultSet(String sql) {
+
+    // }
+
     public static void main(String[] args) {
         Connection conn = connect("admin", new Secret().getPassword());
-
         Scanner sc = new Scanner(System.in);
-        String id = sc.nextLine();
-        String sql = String.format(
-            "select * from ics2609.example\n" +
-            "where id = %s;", id
-        );
-
-        // String condition = sc.nextLine();
-        // sql = String.format(
-        //     "select * from ics2609.example " +
-        //     "where %s", condition
-        // );
-        System.out.println(sql);
 
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = null;
+
+            if (true) {
+                String sql = "insert into ics2609.example values (1, \"Juan Dela Cruz\", \"UST\")";
+                System.out.println(sql);
+
+                Statement stmt = conn.createStatement();
+                boolean result = stmt.execute(sql);
+                
+                if (stmt.getUpdateCount() > 0) {
+                    String selectSql = String.format("select * from ics2609.example");
+                    Statement selectStmt = conn.createStatement();
+                    rs = selectStmt.executeQuery(selectSql);
+                }
+            } else {
+                System.out.println("Input _id to fetch: ");
+                String _id = sc.nextLine();
+                String sql = String.format(
+                    "select * from ics2609.example\n" +
+                    "where _id = %s", _id
+                );
+
+                Statement stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
+            }
             
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -74,18 +89,6 @@ public class App {
                 String name = rs.getString("name");
                 System.out.println(String.format("name: %s", name));
             }
-
-            rs = stmt.getResultSet();
-
-            while (rs.next() || rs.first()) {
-                String name = rs.getString("name");
-                System.out.println(String.format("name: %s", name));
-            }
-
-            stmt.close();
-            rs = stmt.getResultSet();
-
-            System.out.println(rs);
 
             close();
         } catch (SQLException sqlException) {
