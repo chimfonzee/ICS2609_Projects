@@ -54,14 +54,27 @@ public class App {
         try {
             ResultSet rs = null;
 
-            if (true) {
+            if (false) {
                 String sql = "insert into ics2609.example values (1, \"Juan Dela Cruz\", \"UST\")";
                 System.out.println(sql);
 
                 Statement stmt = conn.createStatement();
-                boolean result = stmt.execute(sql);
+                stmt.execute(sql);
                 
                 if (stmt.getUpdateCount() > 0) {
+                    String selectSql = String.format("select * from ics2609.example");
+                    Statement selectStmt = conn.createStatement();
+                    rs = selectStmt.executeQuery(selectSql);
+                }
+            } else if (true) {
+                String sql = "update ics2609.example" +
+                    "SET name = \"Juliana Giva\"" +
+                    "WHERE _id = 1";
+                
+                Statement stmt = conn.createStatement();
+                int resultCount = stmt.executeUpdate(sql);
+
+                if (resultCount > 0) {
                     String selectSql = String.format("select * from ics2609.example");
                     Statement selectStmt = conn.createStatement();
                     rs = selectStmt.executeQuery(selectSql);
