@@ -37,10 +37,23 @@ public class DBManager {
                 "values(?, ?, ?)";
             PreparedStatement createUser = conn.prepareStatement(createUserSql);
             preStmts.put("createUser", createUser);
+
+            String getUserSql =
+                "select * " +
+                "from ics2609.users " +
+                "where username = ?";
+            PreparedStatement getUser = conn.prepareStatement(getUserSql);
+            preStmts.put("getUser", getUser);
+
+            String deleteUserSql =
+                "delete from ics2609.users " +
+                "where username = ?";
+            PreparedStatement deleteUser = conn.prepareStatement(deleteUserSql);
+            preStmts.put("deleteUser", deleteUser);
         } catch (SQLException sqlException) {
-
+            // do exception handling here
         } catch (Exception e) {
-
+            // do exception handling here
         }
     }
 
@@ -59,7 +72,7 @@ public class DBManager {
         return false;
     }
 
-    public boolean dbLogin(String username, String password) throws SQLException {
+    public boolean dbLogin(String username, String password) {
         PreparedStatement login = preStmts.get("login");
         int count = 0;
 
@@ -74,13 +87,16 @@ public class DBManager {
             System.out.println("Test here");
         } catch (Exception e) {
             System.out.println("Test here");
-        } finally {
+        }
+        try {
             login.clearParameters();
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
         }
         return count == 1;
     }
 
-    public boolean createUser(String username, String address, String password) throws SQLException {
+    public boolean createUser(String username, String address, String password) {
         PreparedStatement createUser = preStmts.get("createUser");
         int inserted = 0;
 
@@ -91,13 +107,62 @@ public class DBManager {
 
             inserted = createUser.executeUpdate();
         } catch (SQLException sqlException) {
-
+            // do exception handling here
         } catch (Exception e) {
-
-        } finally {
+            // do exception handling here
+        }
+        try {
             createUser.clearParameters();
+        } catch (SQLException sqlException) {
+            System.out.println(sqlException.getMessage());
+        }
+        return inserted > 0;
+    }
+
+    public User getUser(String username) {
+        PreparedStatement getUser = preStmts.get("getUser");
+        User retrievedUser = null;
+
+        try {
+            getUser.setString(1, username);
+            ResultSet rs = getUser.executeQuery();
+            if (rs.next()) {
+                retrievedUser = new User(rs.getString("username"), rs.getString("address"));
+            }
+        } catch (SQLException sqlException) {
+            // do exception handling here
+        } catch (Exception e) {
+            // do exception handling here
+        }
+        try {
+            getUser.clearParameters();
+        } catch (SQLException sqlException) {
+            // do exception handling here
         }
 
-        return inserted > 0;
+        return retrievedUser;
+    }
+
+    public boolean deleteUser(String username) {
+        PreparedStatement deleteUser = preStmts.get("deleteUser");
+        boolean isDeleted = false;
+
+        try {
+            deleteUser.setString(1, username);
+            int removed = deleteUser.executeUpdate();
+            isDeleted = removed == 1;
+        } catch (SQLException sqlException) {
+            // do handling here
+        } catch (Exception exception) {
+            // do handling here
+        }
+        
+        try {
+            deleteUser.clearParameters();
+        } catch (SQLException sqlException) {
+            // do handling here
+        }
+
+        return isDeleted;
     }
 }

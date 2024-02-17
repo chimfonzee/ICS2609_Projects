@@ -1,7 +1,5 @@
 package com.example; //comment out if default package
 
-import java.sql.SQLException;
-
 public class App {
     public static DBManager dbManager = new DBManager("admin", new Secret().getPassword());
 
@@ -14,16 +12,22 @@ public class App {
         } else {
             System.out.println("Username does not exist");
         }
+
+        username = "Renzo";
+        User user = getUser(username);
+        System.out.println(user.getName());
+        System.out.println(user.getAddress());
     }
 
     public static boolean login(String username, String password) {
-        try {
-            boolean result = dbManager.dbLogin(username, password);
-            // do stuff here
-            return result;
-        } catch (SQLException sqlException) {
+        boolean result = dbManager.dbLogin(username, password);
+        // do stuff here
+        return result;
+    }
 
-        }
-        return false;
+    public static User getUser(String username) {
+        User user = dbManager.getUser(username);
+        // do stuff here
+        return user;
     }
 }
