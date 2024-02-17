@@ -50,6 +50,20 @@ public class DBManager {
                 "where username = ?";
             PreparedStatement deleteUser = conn.prepareStatement(deleteUserSql);
             preStmts.put("deleteUser", deleteUser);
+
+            String updateUserSql =
+                "update ics2609.users " +
+                "set ? " +
+                "where username = ?";
+            PreparedStatement updateUser = conn.prepareStatement(updateUserSql);
+            preStmts.put("updateUser", updateUser);
+
+            String updatePasswordSql =
+                "update ics2609.users " +
+                "set password = ? " +
+                "where username = ?";
+            PreparedStatement updatePassword = conn.prepareStatement(updatePasswordSql);
+            preStmts.put("updatePassword", updatePassword);
         } catch (SQLException sqlException) {
             // do exception handling here
         } catch (Exception e) {
@@ -96,13 +110,13 @@ public class DBManager {
         return count == 1;
     }
 
-    public boolean createUser(String username, String address, String password) {
+    public boolean createUser(User user, String password) {
         PreparedStatement createUser = preStmts.get("createUser");
         int inserted = 0;
 
         try {            
-            createUser.setString(1, username);
-            createUser.setString(2, address);
+            createUser.setString(1, user.getName());
+            createUser.setString(2, user.getAddress());
             createUser.setString(3, password);
 
             inserted = createUser.executeUpdate();
@@ -164,5 +178,58 @@ public class DBManager {
         }
 
         return isDeleted;
+    }
+
+    public boolean updateUser(User user, String username) {
+        PreparedStatement updateUser = preStmts.get("updateUser");
+        String setClause = "";
+        int updates = 0;
+
+        try {
+            if (user.getName() != null && !user.getName().equals(""))
+                setClause = String.format("username = %s", user.getName());
+            if (user.getAddress() != null && !user.getAddress().equals(""))
+                if (setClause.equals(""))
+                    setClause = String.format("address = %s", user.getAddress());
+                else
+                    setClause = String.format("%s, address = %s", setClause, user.getAddress());
+            
+            updateUser.setString(1, setClause);
+            updateUser.setString(2, username);
+            updates = updateUser.executeUpdate();
+        } catch (SQLException sqlException) {
+
+        } catch (Exception exception) {
+
+        }
+        try {
+            updateUser.clearParameters();
+        } catch (SQLException sqlException) {
+
+        }
+
+        return updates > 0;
+    }
+
+    public boolean updatePassword(String username, String password) {
+        PreparedStatement updatePassword = preStmts.get("updatePassword");
+        int updates = 0;
+
+        try {
+            updatePassword.setString(1, password);
+            updatePassword.setString(2, username);
+            updates = updatePassword.executeUpdate();
+        } catch (SQLException sqlException) {
+
+        } catch (Exception exception) {
+
+        }
+        try {
+            updatePassword.clearParameters();
+        } catch (SQLException sqlException) {
+
+        }
+
+        return updates > 0;
     }
 }
