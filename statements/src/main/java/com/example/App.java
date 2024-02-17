@@ -2,6 +2,7 @@ package com.example; //comment out if default package
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -114,6 +115,33 @@ public class App {
                 String name = rs.getString("name");
                 System.out.println(String.format("name: %s", name));
             }
+
+            System.out.println("Input `table` name: ");
+            String tableName = sc.nextLine();
+            System.out.println("Input `column` name: ");
+            String columnName = sc.nextLine();
+            System.out.println("Input `name` value:");
+            String name = sc.nextLine();
+
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(String.format(
+                "select %s from %s " +
+                "where name = %s",
+                columnName, tableName, name));
+
+            //inefficient
+            String names[] = {"Harry", "Ray", "Harjit"};
+            for (int i = 10; i < names.length + 10; i++) {
+                Statement newStmt = conn.createStatement();
+                newStmt.execute(String.format("insert into ics2609.example values (%d, %s, %s)", i, names[i], "UST"));
+            }
+
+            //versus
+            Statement batchStatement = conn.createStatement();
+            for (int i = 20; i < names.length + 20; i++) {
+                batchStatement.addBatch(String.format("insert into ics2609.example values (%d, %s, %s)", i, names[i], "UST"));
+            }
+            batchStatement.executeBatch();
 
             close();
         } catch (SQLException sqlException) {
