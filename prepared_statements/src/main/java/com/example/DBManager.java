@@ -69,8 +69,7 @@ public class DBManager {
             String selectEmptySql =
                 "select * " +
                 "from ics2609.users " +
-                "where username = ? or address = ?";
-            <>.setString(1, null);
+                "where username is ? or address is ?";
         } catch (SQLException sqlException) {
             // do exception handling here
         } catch (Exception e) {
