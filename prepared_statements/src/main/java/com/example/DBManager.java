@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DBManager {
@@ -64,6 +65,12 @@ public class DBManager {
                 "where username = ?";
             PreparedStatement updatePassword = conn.prepareStatement(updatePasswordSql);
             preStmts.put("updatePassword", updatePassword);
+
+            String selectEmptySql =
+                "select * " +
+                "from ics2609.users " +
+                "where username = ? or address = ?";
+            <>.setString(1, null);
         } catch (SQLException sqlException) {
             // do exception handling here
         } catch (Exception e) {
@@ -232,4 +239,33 @@ public class DBManager {
 
         return updates > 0;
     }
+
+    public ArrayList<User> selectEmtpy() {
+        PreparedStatement selectEmpty = preStmts.get("selectEmpty");
+        ArrayList<User> emptyUsers = new ArrayList<User>();
+
+        try {
+            selectEmpty.setNull(1, java.sql.Types.VARCHAR);
+            selectEmpty.setNull(2, java.sql.Types.VARCHAR);
+            ResultSet rs = selectEmpty.executeQuery();
+
+            while (rs.next()) {
+                User emptyUser = new User(rs.getString("username"), rs.getString("address"));
+                emptyUsers.add(emptyUser);
+            }
+        } catch (SQLException sqlException) {
+
+        } catch (Exception exception) {
+
+        }
+        try {
+            selectEmpty.clearParameters();
+        } catch (SQLException sqlException) {
+
+        }
+        
+        return emptyUsers;
+    }
+
+
 }
