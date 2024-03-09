@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DBManager {
-    private String mySQLHost = "192.168.144.1"; //localhost
+    private String mySQLHost = "127.0.0.1"; //localhost
     private String mySQLPort = "3306";
     private Connection conn = null;
     private HashMap<String, PreparedStatement> preStmts = new HashMap<String, PreparedStatement>();
 
     public DBManager(String username, String password) {
         try {
-            String url = String.format("jdbc:mysql://%s:%s", mySQLHost, mySQLPort);
+            Class.forName("com.mysql.jdbc.Driver");
+            String url = String.format("jdbc:mysql://%s:%s?useSSL=false&allowPublicKeyRetrieval=true", mySQLHost, mySQLPort);
             conn = DriverManager.getConnection(url, username, password);
             System.out.println("Completed connection.");
         } catch (SQLException sqlException) {
