@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CaptchaExampleServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        Captcha captcha = Captcha.load(req, "captchaCode")
+        Captcha captcha = Captcha.load(req, "formCaptcha");
         if(captcha.validate(req.getParameter("captchaCode"))) {
             
         }
