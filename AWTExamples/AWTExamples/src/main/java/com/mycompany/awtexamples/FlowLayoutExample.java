@@ -19,7 +19,7 @@ public class FlowLayoutExample
 
 	public void startApp()
 	{
-		f.setLayout(new FlowLayout());
+		f.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		f.add(bAdd);
 		f.add(bSub);
