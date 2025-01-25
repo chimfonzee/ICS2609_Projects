@@ -16,7 +16,6 @@ import java.sql.Statement;
 public class JDBCStartup {
 
     private class User {
-
         String username;
         String password;
         String accessRole;
@@ -55,7 +54,7 @@ public class JDBCStartup {
     private Connection conn;
 
     public JDBCStartup(String username, String password, String database) {
-        String connStr = "jdbc:sqlite:".concat(database);
+        String connStr = "jdbc:sqlite:resources:" + database;
         try {
             conn = DriverManager.getConnection(connStr);
         } catch (SQLException e) {
@@ -74,13 +73,21 @@ public class JDBCStartup {
         String sqlStr = "select * from accounts a where a.username=" +
                 username + " & a.password=" + password;
         ResultSet rs = stmt.executeQuery(sqlStr);
-        rs.next();
-        return new User(rs.getString("username"), rs.getString("password"),
+        if(rs.next())
+            return new User(rs.getString("username"), rs.getString("password"),
                 rs.getString("access_role"));
+        else return null;
     }
 
     public static void main(String[] args) {
         JDBCStartup jdbc = new JDBCStartup("root", "root", "database.db");
-        jdbc.getAll();
+        try {
+            ResultSet rs = jdbc.getAll();
+            while(rs.next()) {
+                System.out.println(rs.getString("username") + rs.getString("password"));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.toString());
+        }
     }
 }
