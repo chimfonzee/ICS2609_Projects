@@ -54,7 +54,8 @@ public class JDBCStartup {
     private Connection conn;
 
     public JDBCStartup(String username, String password, String database) {
-        String connStr = "jdbc:sqlite:resources:" + database;
+        String connStr = "jdbc:sqlite:" + database;
+        System.out.println(connStr);
         try {
             conn = DriverManager.getConnection(connStr);
         } catch (SQLException e) {
@@ -70,7 +71,7 @@ public class JDBCStartup {
 
     public User getUser(String username, String password) throws SQLException {
         Statement stmt = conn.createStatement();
-        String sqlStr = "select * from accounts a where a.username=" +
+        String sqlStr = "select * from example.accounts a where a.username=" +
                 username + " & a.password=" + password;
         ResultSet rs = stmt.executeQuery(sqlStr);
         if(rs.next())
@@ -80,14 +81,17 @@ public class JDBCStartup {
     }
 
     public static void main(String[] args) {
-        JDBCStartup jdbc = new JDBCStartup("root", "root", "database.db");
+        String directPathToDb = "C:\\Users\\User\\ics2609_projects\\ICS2609_Projects\\JDBCStartup\\example";
+        JDBCStartup jdbc = new JDBCStartup("root", "root", directPathToDb);
         try {
             ResultSet rs = jdbc.getAll();
             while(rs.next()) {
                 System.out.println(rs.getString("username") + rs.getString("password"));
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             System.err.println(e.toString());
+            System.err.println("");
         }
     }
 }
