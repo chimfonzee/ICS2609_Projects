@@ -58,7 +58,7 @@ public class PreparedStatementExamples {
     private Hashtable<String, PreparedStatement> pStatements;
 
     public PreparedStatementExamples(String username, String password, String database) {
-        String connStr = "jdbc:sqlite:resources:" + database;
+        String connStr = "jdbc:sqlite:" + database;
         try {
             conn = DriverManager.getConnection(connStr);
             pStatements = new Hashtable<>();
@@ -90,11 +90,13 @@ public class PreparedStatementExamples {
     }
 
     public static void main(String[] args) {
-        PreparedStatementExamples jdbc = new PreparedStatementExamples("root", "root", "database.db");
+        String directPathToDb = "database";
+        PreparedStatementExamples jdbc = new PreparedStatementExamples("root", "root", directPathToDb);
         try {
             ResultSet rs = jdbc.getAll();
             while(rs.next()) {
-                System.out.println(rs.getString("username") + rs.getString("password"));
+                System.out.println(rs.getString("username") + " " +
+                        rs.getString("password"));
             }
         } catch (SQLException e) {
             System.err.println(e.toString());
