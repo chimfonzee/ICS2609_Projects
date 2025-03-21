@@ -66,13 +66,17 @@ public class JDBCStartup {
 
     public ResultSet getAll() throws SQLException {
         Statement stmt = conn.createStatement();
-        return stmt.executeQuery("select * from accounts");
+        ResultSet rs = stmt.executeQuery("select * from accounts");
+        ResultSet rs1 = stmt.executeQuery("select * from student");
+        System.out.println("[1] " + rs.getString(1) + " [2] " + rs.getString(2));
+        System.out.println("[1] " + rs1.getString(1) + " [2] " + rs1.getString(2));
+        return rs1;
     }
 
     public User getUser(String username, String password) throws SQLException {
         Statement stmt = conn.createStatement();
         String sqlStr = "select * from example.accounts a where a.username=" +
-                username + " & a.password=" + password;
+                username + " & a.password LIKE " + password;
         ResultSet rs = stmt.executeQuery(sqlStr);
         if(rs.next())
             return new User(rs.getString("username"), rs.getString("password"),
@@ -81,7 +85,7 @@ public class JDBCStartup {
     }
 
     public static void main(String[] args) {
-        String directPathToDb = "C:\\Users\\User\\ics2609_projects\\ICS2609_Projects\\JDBCStartup\\example";
+        String directPathToDb = "C:\\Users\\fonze\\OneDrive\\Documents\\NetBeansProjects\\ICS2609_Projects\\JDBCStartup\\database";
         JDBCStartup jdbc = new JDBCStartup("root", "root", directPathToDb);
         try {
             ResultSet rs = jdbc.getAll();

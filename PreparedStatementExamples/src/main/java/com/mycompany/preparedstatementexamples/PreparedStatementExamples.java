@@ -54,7 +54,7 @@ public class PreparedStatementExamples {
         }
     }
 
-    private Connection conn;
+    public Connection conn;
     private Hashtable<String, PreparedStatement> pStatements;
 
     public PreparedStatementExamples(String username, String password, String database) {
@@ -64,7 +64,7 @@ public class PreparedStatementExamples {
             pStatements = new Hashtable<>();
             String getAllStr = "select * from accounts";
             String getUserStr = "select * from accounts a where a.username=?" +
-                    "AND a.password=?";
+                    "AND password=?";
             
             pStatements.put("getAll", conn.prepareStatement(getAllStr));
             pStatements.put("getUser", conn.prepareStatement(getUserStr));
@@ -85,7 +85,7 @@ public class PreparedStatementExamples {
         ResultSet rs = getUser.executeQuery();
         if(rs.next())
             return new User(rs.getString("username"), rs.getString("password"),
-                rs.getString("access_role"));
+                rs.getString("user_role"));
         else return null;
     }
 
@@ -93,13 +93,17 @@ public class PreparedStatementExamples {
         String directPathToDb = "database";
         PreparedStatementExamples jdbc = new PreparedStatementExamples("root", "root", directPathToDb);
         try {
+            User user = jdbc.getUser("chimfonzee", "p@55word");
             ResultSet rs = jdbc.getAll();
             while(rs.next()) {
+                jdbc.conn.close();
                 System.out.println(rs.getString("username") + " " +
                         rs.getString("password"));
             }
+            System.out.println("[1] " + user.getUsername() + " [2] " + user.getPassword());
         } catch (SQLException e) {
-            System.err.println(e.toString());
+//            System.err.println(e.toString());
+          e.printStackTrace();
         }
     }
 }
